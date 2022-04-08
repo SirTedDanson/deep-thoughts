@@ -15,28 +15,28 @@ db.once('open', async () => {
     const email = faker.internet.email(username);
     const password = faker.internet.password();
 
+    console.log(email)
+    console.log(password)
+
     userData.push({ username, email, password });
   }
-  // console.log("userData: ", userData)
-  const createdUsers = await User.collection.insertMany(userData);
-  // console.log("User Collection", User.collection)
-  // console.log("createdUsers: ", createdUsers)
   
+  const createdUsers = await User.collection.insertMany(userData);
 
-  // // create friends
-  // for (let i = 0; i < 100; i += 1) {
-  //   const randomUserIndex = Math.floor(Math.random() * createdUsers.ops.length);
-  //   const { _id: userId } = createdUsers.ops[randomUserIndex];
+  // create friends
+  for (let i = 0; i < 100; i += 1) {
+    const randomUserIndex = Math.floor(Math.random() * createdUsers.ops.length);
+    const { _id: userId } = createdUsers.ops[randomUserIndex];
 
-  //   let friendId = userId;
+    let friendId = userId;
 
-  //   while (friendId === userId) {
-  //     const randomUserIndex = Math.floor(Math.random() * createdUsers.ops.length);
-  //     friendId = createdUsers.ops[randomUserIndex];
-  //   }
+    while (friendId === userId) {
+      const randomUserIndex = Math.floor(Math.random() * createdUsers.ops.length);
+      friendId = createdUsers.ops[randomUserIndex];
+    }
 
-  //   await User.updateOne({ _id: userId }, { $addToSet: { friends: friendId } });
-  // }
+    await User.updateOne({ _id: userId }, { $addToSet: { friends: friendId } });
+  }
 
   // create thoughts
   let createdThoughts = [];
@@ -47,7 +47,6 @@ db.once('open', async () => {
     const { username, _id: userId } = createdUsers.ops[randomUserIndex];
 
     const createdThought = await Thought.create({ thoughtText, username });
-    console.log("createdThought: ", createdThought)
 
     const updatedUser = await User.updateOne(
       { _id: userId },
@@ -57,22 +56,22 @@ db.once('open', async () => {
     createdThoughts.push(createdThought);
   }
 
-  // // create reactions
-  // for (let i = 0; i < 100; i += 1) {
-  //   const reactionBody = faker.lorem.words(Math.round(Math.random() * 20) + 1);
+  // create reactions
+  for (let i = 0; i < 100; i += 1) {
+    const reactionBody = faker.lorem.words(Math.round(Math.random() * 20) + 1);
 
-  //   const randomUserIndex = Math.floor(Math.random() * createdUsers.ops.length);
-  //   const { username } = createdUsers.ops[randomUserIndex];
+    const randomUserIndex = Math.floor(Math.random() * createdUsers.ops.length);
+    const { username } = createdUsers.ops[randomUserIndex];
 
-  //   const randomThoughtIndex = Math.floor(Math.random() * createdThoughts.length);
-  //   const { _id: thoughtId } = createdThoughts[randomThoughtIndex];
+    const randomThoughtIndex = Math.floor(Math.random() * createdThoughts.length);
+    const { _id: thoughtId } = createdThoughts[randomThoughtIndex];
 
-  //   await Thought.updateOne(
-  //     { _id: thoughtId },
-  //     { $push: { reactions: { reactionBody, username } } },
-  //     { runValidators: true }
-  //   );
-  // }
+    await Thought.updateOne(
+      { _id: thoughtId },
+      { $push: { reactions: { reactionBody, username } } },
+      { runValidators: true }
+    );
+  }
 
   console.log('all done!');
   process.exit(0);
