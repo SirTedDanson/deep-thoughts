@@ -15,9 +15,6 @@ db.once('open', async () => {
     const email = faker.internet.email(username);
     const password = faker.internet.password();
 
-    console.log(email)
-    console.log(password)
-
     userData.push({ username, email, password });
   }
 
